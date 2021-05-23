@@ -21,7 +21,7 @@ $ KUBECONFIG=~/.kube/config:~/.kube/kubconfig2 kubectl config view
 
 # 获取 e2e 用户的密码
 $ kubectl config view -o jsonpath='{.users[?(@.name == "e2e")].user.password}'
-
+rc
 $ kubectl config current-context              # 显示当前的上下文
 $ kubectl config use-context my-cluster-name  # 设置默认上下文为 my-cluster-name
 
