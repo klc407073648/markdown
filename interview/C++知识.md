@@ -102,7 +102,7 @@ int main()
 - 申请的内存所在位置: new操作符从自由存储区（free store）上为对象动态分配内存空间，而malloc函数从堆上动态分配内存。
 - 返回类型安全性: new操作符内存分配成功时，返回的是对象类型的指针，类型严格与对象匹配，无须进行类型转换，故new是符合类型安全性的操作符。
 而malloc内存分配成功则是返回void * ，需要通过强制类型转换将void*指针转换成我们需要的类型。
-- 内存分配失败时的返回值: new内存分配失败时，会抛出bac_alloc异常，它不会返回NULL；malloc分配内存失败时返回NULL。
+- 内存分配失败时的返回值: new内存分配失败时，会抛出bad_alloc异常，它不会返回NULL；malloc分配内存失败时返回NULL。
 ```
 int *a  = (int *)malloc ( sizeof (int ));
 if(NULL == a)
@@ -512,7 +512,7 @@ pc1->f1();
 
 非继承的类:
 
-* 如果一个类中有虚函数，则该类就有一个虚函数表。虚函数表是属于类的，不属于类对象。在编译的时候确定，存放在只读数据段。
+* 如果一个类中有虚函数，则该类就有一个虚函数表。`虚函数表是属于类的，不属于类对象。在编译的时候确定，存放在只读数据段`。
 * 每一个实例化的类对象都有一个虚函数表指针，指向类的虚函数表。虚函数表指针属于类对象。存放在堆上或者栈上。
 
 继承的类:
@@ -689,3 +689,164 @@ STL内存管理使用二级内存配置器。
         * 我们常见的 `SVN 和 Git` 也是用了乐观锁的思想，先让用户编辑代码，然后提交的时候，通过版本号来判断是否产生了冲突，发生了冲突的地方，需要我们自己修改后，再重新提交。
         * `使用场景`: 只有在冲突概率非常低，且加锁成本非常高的场景时，才考虑使用乐观锁。
 
+
+## C++模板的偏特化与全特化
+
+模板机制为C++提供了泛型编程的方式，在减少代码冗余的同时仍然可以提供类型安全。 特化必须在同一命名空间下进行，可以特化类模板也可以特化函数模板，`但类模板可以偏特化和全特化，而函数模板只能全特化`。 模板实例化时会优先匹配"模板参数"最相符的那个特化版本。
+
+模板的声明
+
+```c++
+// 类模板
+template <class T1, class T2>
+class A{
+    T1 data1;
+    T2 data2;
+};
+
+// 函数模板
+template <class T>
+T max(const T lhs, const T rhs){   
+    return lhs > rhs ? lhs : rhs;
+}
+```
+
+全特化
+```c++
+// 全特化类模板
+template <>
+class A<int, double>{
+    int data1;
+    double data2;
+};
+
+// 函数模板
+template <>
+int max(const int lhs, const int rhs){   
+    return lhs > rhs ? lhs : rhs;
+}
+```
+注意类模板的全特化时在类名后给出了"模板实参"，但函数模板的函数名后没有给出"模板实参"。 这是因为编译器根据int max(const int, const int)的函数签名可以推导出来它是T max(const T, const T)的特化。
+
+特化的歧义:
+```c++
+template <class T>
+void f(){ T d; }
+
+template <>
+void f(){ int d; }
+
+此时编译器不知道f()是从f<T>()特化来的，编译时会有错误：error: no function template matches function template specialization 'f'
+
+这时我们便需要显式指定"模板实参"：
+
+template <class T>
+void f(){ T d; }
+
+template <>
+void f<int>(){ int d; }
+```
+
+偏特化
+```c++
+template <class T2>
+class A<int, T2>{
+    ...
+};
+```
+
+## C++四种类型转换
+
+C风格的强制类型转换很简单，均用 Type b = (Type)a 形式转换。C++风格的类型转换提供了4种类型转换操作符来应对不同场合的应用，如下表：
+
+转换类型操作符 | 作用
+---|---
+const_cast | 去掉类型的const或volatile属性
+static_cast | 无条件转换，静态类型转换
+dynamic_cast | 有条件转换，动态类型转换，运行时检查类型安全（转换失败返回NULL）
+reinterpret_cast | 仅重新解释类型，但没有进行二进制的转换
+
+### const_cast
+通常被用来将对象的常量性移除，它也是唯一有此能力的C++-style转型操作符
+
+```c++
+class C{};
+const C* a = new C;
+C* b = const_cast<C*>(a);
+```
+
+### static_cast
+
+* static_cast用来强迫隐式转换，允许执行任意的隐式转换和相反转换动作
+* 可将 non-const对象转为const对象，将int转为double，将void*指针转为typed指针，将pointer-to-base转为pointer-to-derived
+* 无法将const转为non-const，这个只有const-cast才可办到
+
+
+```c++
+int n = 6;
+double d = static_cast<double>(n);    
+
+class Base{};
+class Derived:public Base{};
+
+Base* a = new Base;
+Derived* b = static_cast<Derived*>(a);//把父类指针转换为子类指针,但是不推荐，访问子类成员会越界
+```
+
+### dynamic_cast
+
+* dynamic_cast 只用于对象的指针和引用。
+* 主要用于执行“安全向下转型（safe downcasting）”,也就是用来决定某对象是否归属继承体系中的某个类型。它是唯一不能由旧式语法执行的动作，也是唯一可能耗费重大运行成本的转型动作
+* 当用于多态类型时，它允许任意的隐式类型转换以及相反过程。
+* 不过，与static_cast不同的是在隐式转换的相反过程中，dynamic_cast会检查操作是否有效，它会检查转换是否会返回一个被请求的有效的完整对象。检查在运行时进行，如果被转换的指针不是一个被请求的有效完整的对象指针，返回值为NULL;
+
+
+```c++
+class Base{
+public:
+    virtual dummy(){}
+};
+class Derived:public Base{};
+
+Base* b1 = new Derived;
+Base* b2 = new Base;
+
+Derived* d1 = dynamic_cast<Derived>(b1);//成功
+Deriver* d2 = dynamic_cast<Derived>(b2);//失败，返回NULL
+
+```
+
+### reinterpert_cast
+
+reinterpert_cast意图执行低级转换，实际动作（及结果）可能取决于编译器，这也就表示它不可移植。例如将一个 pointer to int 转型为一个 int ，这一类型在底层代码以外很少见。
+
+```c++
+class A{};
+class B{};
+
+A *a = new A;
+B *b = reinterpret<B*>(a);//reinterpret_cast就像传统的类型转换一样对待所有指针的类型转换
+```
+
+## 判断一个程序是死循环还是死锁
+
+1. 死循环：
+* 软件状态：未响应
+* CPU：一直保持非0，处于活跃状态
+* 原理：如果主线程出现死循环，那么windows将不能从消息队列中取出消息，并进行处理，所以出现卡死现象。为了验证是这个原因导致界面卡死，打开任务管理器，如果该进程的cpu使用率一直保持非零，比如一直保持在 12%，那么界面卡死的原因是主线程死循环了。
+
+2. 死锁：
+* 软件状态：正在运行
+* CPU：进程的 cpu 使用率一般是0
+* 原理：如果主线程由于跟其他的线程由于争夺资源或者锁，出现了死锁，那么主线程会一直等待资源或者锁，导致主线程不能继续往下执行，分发和处理消息，所以出现卡死。
+
+gdb调试。
+
+
+
+
+手撕c++ shared_ptr
+
+tcp粘包及怎么处理
+
+https://www.nowcoder.com/discuss/584515?source_id=discuss_experience_nctrack&channel=-1

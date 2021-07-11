@@ -94,6 +94,7 @@ $ sudo systemctl stop firewalld
 $ sudo docker exec -it mysql bash
 $ mysql -uroot -p123456
 mysql> grant all privileges on *.* to root@'%' identified by "password";
+grant all privileges on *.* to root@'%' identified by 123456;
 ```
 
 **原理：**
