@@ -59,11 +59,23 @@ grep -rn "hello" ./
 
 ```
 
+## Linux中运行有时间限制的命令
+
+```
+语法格式：
+timeout [OPTION] DURATION COMMAND [ARG]...
+
+在下面的示例中，timeout命令运行一分钟，如果命令没有结束，将在10秒后终止命令：
+
+[root@localhost ~]# timeout -k 10s 1m sh test.sh
+```
+
 ## make命令加速
 ```
 #让make允许4个编译命令同时执行
 make -j4  
 ```
+
 
 ## C++输出cout（bool类型）
 ```

@@ -107,6 +107,19 @@ popd
 
 - #### Channels
 
+## 学习内容
+
+```
+1.编写.proto文件
+2.利用protoc命令，生成消息类和服务类的头文件和实现  --cpp_out  --grpc_out
+3.编写服务端和客户端的代码，服务端代码实现具体rpc的函数
+class RouteGuideImpl final : public RouteGuide::Service {
+...
+}
+```
+
+
+
 ## 问题记录
 
 1.编译内存不足解决方法：
