@@ -1,0 +1,5 @@
+nginx使用：
+
+
+/etc/nginx 下配置nginx.conf文件
+/usr/share/nginx/ 下放资源文件 test
