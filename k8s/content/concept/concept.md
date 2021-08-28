@@ -42,7 +42,7 @@
 
 Kubernetes借鉴了Borg的设计理念，比如Pod、Service、Label和单Pod单IP等。Kubernetes的整体架构跟Borg非常像，如下图所示。
 
-![Kubernetes架构](./images/architecture.png)
+![Kubernetes架构](../../images/architecture.png)
 
 Kubernetes主要由以下几个核心组件组成：
 
