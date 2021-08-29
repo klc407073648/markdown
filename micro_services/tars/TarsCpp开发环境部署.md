@@ -96,3 +96,127 @@ touch main.cpp
 touch makefile
 ```
 
+同步与异步主要代码：
+
+```
+int iRet = prx->testHello(sReq, sRsp);
+cout<<"iRet:"<<iRet<<" sReq:"<<sReq<<" sRsp:"<<sRsp<<endl;
+
+HelloPrxCallbackPtr cb = new HelloCallBack();
+prx->async_testHello(cb, sReq);
+cout<<" sReq:"<<sReq<<endl;
+```
+
+# 基于对象的接口处理
+
+所谓基于对象接口的处理表示该命令接口是针对服务中的对象的。
+
+例如针对CalcImp对象，这个时候如果发送一个命令给服务，则**每个线程中的CalcImp的命令接口都会被执行一次**，并且执行这些接口的过程和执行HelloImp的自身的接口是互斥的（即线程安全的）。
+
+假设CalcImp有成员变量my_str，需要发送命令通知每个CalcImp对象将\_hello修改为自定义的值，步骤如下：
+
+在CalcImp中增加处理函数
+
+```C++
+bool CalcImp::setStr(const std::string& command, const std::string& params, std::string& result)
+{
+	TLOGDEBUG("CalcImp::setStr:"<<params<<endl);
+	my_str = params;
+    return true;
+}
+
+bool CalcImp::showStr(const std::string& command, const std::string& params, std::string& result)
+{
+	TLOGDEBUG("CalcImp::showStr:"<<my_str<<endl);
+    return true;
+}
+```
+
+在CalcImp的初始化中注册函数：
+
+```C++
+void CalcImp::initialize()
+{
+    //initialize servant here:
+    //...
+	//注册处理函数：
+    TARS_ADD_ADMIN_CMD_NORMAL("SETSTRING", CalcImp::setStr);
+	TARS_ADD_ADMIN_CMD_NORMAL("SHOWSTRING", CalcImp::showStr);
+}
+```
+
+# Go语言开发
+
+Linux下安装Golang
+
+```
+##将安装文件解压到 /usr/local目录下：
+cd /usr/local/
+tar -zxvf go1.16.6.linux-amd64.tar.gz  -C /usr/local/
+vi /etc/profile
+
+```
+
+**添加环境变量:**
+
+```
+1、打开配置文件profile
+    命令：vi /etc/profile
+    
+2、在文件最后添加以下内容（环境变量）:
+        export GOROOT=/usr/local/go
+        export GOPATH=/home/klc/tars/TarsGo
+        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+    保存并退出。
+    
+3、重启系统或刷新配置文件。
+    命令：source /etc/profile
+    
+4、检查是否安装成功。
+    命令：go version
+```
+
+设置go env
+
+```
+ go env -w GO111MODULE=auto
+ go env -w GOPROXY=https://mirrors.aliyun.com/goproxy/
+```
+
+go客户端和服务端代码编写
+
+```
+cd /home/klc/tars/TarsGo
+go get -u github.com/TarsCloud/TarsGo/tars
+mkdir -p $GOPATH/bin
+cd $GOPATH/src/github.com/TarsCloud/TarsGo/tars/tools/tars2go && go build
+cp tars2go $GOPATH/bin/
+
+
+sh $GOPATH/src/github.com/TarsCloud/TarsGo/tars/tools/create_tars_server.sh GoApp HelloGo SayHello
+cd /home/klc/tars/TarsGo/src/GoApp/HelloGo
+
+vi sayhello_imp.go ## 实现Add Sub 方法
+make && make tar  ##生成发布包
+
+##编写和运行客户端
+touch HelloGoClient.go
+go build HelloGoClient.go
+./HelloGoClient
+```
+
+
+# 注意事项
+
+```
+/usr/local/tars/cpp/script/cmake_tars_server.sh [App] [Server] [Servant]
+##会生成所需代码框架
+
+采用tars2cpp工具自动生成c++文件：/usr/local/tars/cpp/tools/tars2cpp Hello.tars会生成Hello.h文件，里面包含客户端和服务端的代码( 编译时会自动处理)。
+
+即客户端和服务器都需要Hello.h
+
+服务端:HelloImp是Servant的接口实现类，需要用户实现Hello.tars所定义的接口
+客户端：引用Hello.h头文件，调用接口的函数来测试调用是否正常。
+```
+
