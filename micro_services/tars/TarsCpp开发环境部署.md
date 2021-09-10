@@ -98,13 +98,25 @@ touch makefile
 
 同步与异步主要代码：
 
-```
+```c++
 int iRet = prx->testHello(sReq, sRsp);
 cout<<"iRet:"<<iRet<<" sReq:"<<sReq<<" sRsp:"<<sRsp<<endl;
 
 HelloPrxCallbackPtr cb = new HelloCallBack();
 prx->async_testHello(cb, sReq);
 cout<<" sReq:"<<sReq<<endl;
+
+void HelloServer::initialize()
+{
+    //initialize application here:
+    //...
+
+    addServant<HelloImp>(ServerConfig::Application + "." + ServerConfig::ServerName + ".HelloObj");
+}
+
+服务框架中有全局的结构ServerConfig，它记录了服务的基本信息。
+ServerConfig的成员变量都是静态的，在服务框架初始化时会自动从服务配置文件中初始化这些参数。
+例如，在web界面——运维管理——服务部署下面，设置需要部署服务的一些信息，应用、服务名称、Obj等。
 ```
 
 # 基于对象的接口处理
