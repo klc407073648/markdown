@@ -2,46 +2,30 @@
 #include <iostream>
 #include "buttonrpc.hpp"
 
-
-#define buttont_assert(exp) { \
-	if (!(exp)) {\
-		std::cout << "ERROR: "; \
-		std::cout << "function: " << __FUNCTION__  << ", line: " <<  __LINE__ << std::endl; \
-		system("pause"); \
-	}\
-}\
-
-
 // 测试例子
-void foo_1() {
-	
+void testFun()
+{
+	std::cout << "call testFun" << std::endl;
 }
 
-void foo_2(int arg1) {
-	buttont_assert(arg1 == 10);
+void testInputValue(int arg)
+{
+	std::cout << "call testInputValue" << std::endl;
 }
 
-int foo_3(int arg1) {
-	buttont_assert(arg1 == 10);
-	return arg1 * arg1;
+int testAdd(int a, int b)
+{
+	std::cout << "call testAdd " << std::endl;
+	return a + b;
 }
 
-int foo_4(int arg1, std::string arg2, int arg3, float arg4) {
-	buttont_assert(arg1 == 10);
-	buttont_assert(arg2 == "buttonrpc");
-	buttont_assert(arg3 == 100);
-	buttont_assert((arg4 > 10.0) && (arg4 < 11.0));
-	return arg1 * arg3;
-}
-
-class ClassMem
+class Student
 {
 public:
-	int bar(int arg1, std::string arg2, int arg3) {
-		buttont_assert(arg1 == 10);
-		buttont_assert(arg2 == "buttonrpc");
-		buttont_assert(arg3 == 100);
-		return arg1 * arg3;
+	std::string toString(std::string name, int age, std::string address)
+	{
+		std::cout << "call Student::toString" << std::endl;
+		return "name:" + name + " age:" + std::to_string(age) + " address:" + address;
 	}
 };
 
@@ -52,26 +36,25 @@ struct PersonInfo
 	float height;
 
 	// must implement
-	friend Serializer& operator >> (Serializer& in, PersonInfo& d) {
+	friend Serializer &operator>>(Serializer &in, PersonInfo &d)
+	{
 		in >> d.age >> d.name >> d.height;
 		return in;
 	}
-	friend Serializer& operator << (Serializer& out, PersonInfo d) {
+	friend Serializer &operator<<(Serializer &out, PersonInfo d)
+	{
 		out << d.age << d.name << d.height;
 		return out;
 	}
 };
 
-PersonInfo foo_5(PersonInfo d,  int weigth)
+PersonInfo personFun(PersonInfo d, int hight)
 {
-	buttont_assert(d.age == 10);
-	buttont_assert(d.name == "buttonrpc");
-	buttont_assert(d.height == 170);
-
+	std::cout << "call personFun" << std::endl;
 	PersonInfo ret;
 	ret.age = d.age + 10;
 	ret.name = d.name + " is good";
-	ret.height = d.height + 10;
+	ret.height = d.height + hight;
 	return ret;
 }
 
@@ -80,14 +63,14 @@ int main()
 	buttonrpc server;
 	server.as_server(5555);
 
-	server.bind("foo_1", foo_1);
-	server.bind("foo_2", foo_2);
-	server.bind("foo_3", std::function<int(int)>(foo_3));
-	server.bind("foo_4", foo_4);
-	server.bind("foo_5", foo_5);
+	server.bind("testFun", testFun);
+	server.bind("testInputValue", testInputValue);
+	server.bind("testAdd", std::function<int(int, int)>(testAdd));
 
-	ClassMem s;
-	server.bind("foo_6", &ClassMem::bar, &s);
+	Student stu;
+	server.bind("toString", &Student::toString, &stu);
+
+	server.bind("personFun", personFun);
 
 	std::cout << "run rpc server on: " << 5555 << std::endl;
 	server.run();

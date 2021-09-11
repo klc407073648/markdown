@@ -2,22 +2,17 @@
 #include <iostream>
 #include <ctime>
 #include "buttonrpc.hpp"
+#include <stdio.h>
 
-#ifdef _WIN32
-#include <Windows.h>  // use sleep
-#else
- #include <unistd.h>
-#endif
-
-
-#define buttont_assert(exp) { \
-	if (!(exp)) {\
-		std::cout << "ERROR: "; \
-		std::cout << "function: " << __FUNCTION__  << ", line: " <<  __LINE__ << std::endl; \
-		system("pause"); \
-	}\
-}\
-
+class Student
+{
+public:
+	std::string toString(std::string name, int age, std::string address)
+	{
+		std::cout << "call Student::toString" << std::endl;
+		return "name:" + name + " age:" + std::to_string(age) + " address:" + address;
+	}
+};
 
 struct PersonInfo
 {
@@ -26,11 +21,13 @@ struct PersonInfo
 	float height;
 
 	// must implement
-	friend Serializer& operator >> (Serializer& in, PersonInfo& d) {
+	friend Serializer &operator>>(Serializer &in, PersonInfo &d)
+	{
 		in >> d.age >> d.name >> d.height;
 		return in;
 	}
-	friend Serializer& operator << (Serializer& out, PersonInfo d) {
+	friend Serializer &operator<<(Serializer &out, PersonInfo d)
+	{
 		out << d.age << d.name << d.height;
 		return out;
 	}
@@ -42,37 +39,30 @@ int main()
 	client.as_client("127.0.0.1", 5555);
 	client.set_timeout(2000);
 
-	int callcnt = 0;
-	while (1){
-		std::cout << "current call count: " << ++callcnt << std::endl;
+	client.call<void>("testFun");
 
-		client.call<void>("foo_1");
+	client.call<void>("testInputValue", 20);
 
-		client.call<void>("foo_2", 10);
+	int addResult = client.call<int>("testAdd", 10, 20).val();
+	std::cout << "addResult: " << addResult << std::endl;
 
-		int foo3r = client.call<int>("foo_3", 10).val();
-		buttont_assert(foo3r == 100);
+	Student stu;
 
-		int foo4r = client.call<int>("foo_4", 10, "buttonrpc", 100, (float)10.8).val();
-		buttont_assert(foo4r == 1000);
+	std::string retString = client.call<std::string>("toString", "Jason", 24, "NJ").val();
 
-		PersonInfo  dd = { 10, "buttonrpc", 170 };
-		dd = client.call<PersonInfo>("foo_5", dd, 120).val();
-		buttont_assert(dd.age == 20);
-		buttont_assert(dd.name == "buttonrpc is good");
-		buttont_assert(dd.height == 180);
+	std::cout << "retString: " << retString << std::endl;
 
-		int foo6r = client.call<int>("foo_6", 10, "buttonrpc", 100).val();
-		buttont_assert(foo6r == 1000);
+	PersonInfo person = {10, "buttonrpc", 170};
+	person = client.call<PersonInfo>("personFun", person, 10).val();
 
-		value_t<void> xx = client.call<void>("foo_7", 666);
-		buttont_assert(!xx.valid());
-#ifdef _WIN32
-		Sleep(1000);
-#else
-        sleep(1);
-#endif
-	}
+	std::cout << "person age: " << person.age << std::endl;
+	std::cout << "person name: " << person.name << std::endl;
+	std::cout << "person height: " << person.height << std::endl;
+
+	value_t<void> testValue_t = client.call<void>("foo_7", 111, 222, 333);
+	std::cout << "testValue_t val: " << testValue_t.val() << std::endl;
+	std::cout << "testValue_t code: " << testValue_t.error_code() << std::endl;
+	std::cout << "testValue_t msg: " << testValue_t.error_msg() << std::endl;
 
 	return 0;
 }
