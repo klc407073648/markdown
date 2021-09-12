@@ -18,6 +18,20 @@
 
 
 
+```
+/usr/local/tars/cpp/script/cmake_tars_server.sh [App] [Server] [Servant]
+##会生成所需代码框架
+
+采用tars2cpp工具自动生成c++文件：/usr/local/tars/cpp/tools/tars2cpp Hello.tars会生成Hello.h文件，里面包含客户端和服务端的代码( 编译时会自动处理)。
+
+即客户端和服务器都需要Hello.h
+
+服务端:HelloImp是Servant的接口实现类，需要用户实现Hello.tars所定义的接口
+客户端：引用Hello.h头文件，调用接口的函数来测试调用是否正常。
+```
+
+
+
 # 关注概念
 
 - 服务鉴权

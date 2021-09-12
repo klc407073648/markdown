@@ -8,6 +8,13 @@
 * [buttonrpc介绍](./guide/buttonrpc-intro.md)
 * [开发demo](./guide/demo.md)
 
-# 使用介绍
+# 使用方法
 
+```
+cd build
+cmake ..
+make
 
+./main_server
+./main_client
+```
