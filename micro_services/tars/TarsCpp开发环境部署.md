@@ -13,6 +13,7 @@
 ```
 yum install glibc-devel gcc gcc-c++ bison flex
 yum install zlib-devel
+yum -y install  libatomic
 ##cmake 需要单独安装3.0以上版本
 ```
 
@@ -25,6 +26,16 @@ cd /home/klc/tars/
 git clone https://github.com/TarsCloud/TarsCpp.git --recursive
 cd ./TarsCpp/
 git submodule update --init ##下载过程可能有些文件下载失败，可以进入TarsCpp文件夹后继续下载
+
+mkdir build
+cd build
+cmake ..
+make
+make install
+
+#gcc9.1需要修改的地方
+ln -sf /usr/local/lib64/libstdc++.so.6.0.26 /lib64/libstdc++.so.6
+直接把/lib64/libstdc++.so.6.0.19 移到其他路径下，创建上述软链接
 ```
 
 # TarsCPP 快速入门
@@ -157,67 +168,6 @@ void CalcImp::initialize()
 }
 ```
 
-# Go语言开发
-
-Linux下安装Golang
-
-```
-##将安装文件解压到 /usr/local目录下：
-cd /usr/local/
-tar -zxvf go1.16.6.linux-amd64.tar.gz  -C /usr/local/
-vi /etc/profile
-
-```
-
-**添加环境变量:**
-
-```
-1、打开配置文件profile
-    命令：vi /etc/profile
-    
-2、在文件最后添加以下内容（环境变量）:
-        export GOROOT=/usr/local/go
-        export GOPATH=/home/klc/tars/TarsGo
-        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-    保存并退出。
-    
-3、重启系统或刷新配置文件。
-    命令：source /etc/profile
-    
-4、检查是否安装成功。
-    命令：go version
-```
-
-设置go env
-
-```
- go env -w GO111MODULE=auto
- go env -w GOPROXY=https://mirrors.aliyun.com/goproxy/
-```
-
-go客户端和服务端代码编写
-
-```
-cd /home/klc/tars/TarsGo
-go get -u github.com/TarsCloud/TarsGo/tars
-mkdir -p $GOPATH/bin
-cd $GOPATH/src/github.com/TarsCloud/TarsGo/tars/tools/tars2go && go build
-cp tars2go $GOPATH/bin/
-
-
-sh $GOPATH/src/github.com/TarsCloud/TarsGo/tars/tools/create_tars_server.sh GoApp HelloGo SayHello
-cd /home/klc/tars/TarsGo/src/GoApp/HelloGo
-
-vi sayhello_imp.go ## 实现Add Sub 方法
-make && make tar  ##生成发布包
-
-##编写和运行客户端
-touch HelloGoClient.go
-go build HelloGoClient.go
-./HelloGoClient
-```
-
-
 # 注意事项
 
 ```
@@ -230,5 +180,42 @@ go build HelloGoClient.go
 
 服务端:HelloImp是Servant的接口实现类，需要用户实现Hello.tars所定义的接口
 客户端：引用Hello.h头文件，调用接口的函数来测试调用是否正常。
+
+生成的Hello.h中包含多种代理的类定义 和 服务提供者的定义
+HelloPrxCallback   		/* callback of async proxy for client */
+HelloCoroPrxCallback	/* callback of coroutine async proxy for client */
+HelloProxy				/* proxy for client */
+Hello 					/* servant for server */
+
+```
+
+实际使用时，通过 通信器 Communicator 拿到代理对应的服务信息，然后进行调用。
+
+```c++
+Communicator comm;
+
+    try
+    {
+        HelloPrx prx;
+        comm.stringToProxy("TestApp.HelloServer.HelloObj@tcp -h 172.25.0.3 -p 20001" , prx);
+
+        try
+        {
+            string sReq("hello world");
+            string sRsp("");
+
+            int iRet = prx->testHello(sReq, sRsp);
+            cout<<"iRet:"<<iRet<<" sReq:"<<sReq<<" sRsp:"<<sRsp<<endl;
+
+        }
+        catch(exception &ex)
+        {
+            cerr << "ex:" << ex.what() << endl;
+        }
+        catch(...)
+        {
+            cerr << "unknown exception." << endl;
+        }
+    }
 ```
 

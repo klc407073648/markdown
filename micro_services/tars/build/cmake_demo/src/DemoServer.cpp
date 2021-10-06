@@ -1,24 +1,22 @@
-﻿
-
-#include "HelloServer.h"
-#include "HelloImp.h"
+﻿#include "DemoServer.h"
+#include "DemoServantImp.h"
 
 using namespace std;
 
-HelloServer g_app;
+DemoServer g_app;
 
 /////////////////////////////////////////////////////////////////
 void
-HelloServer::initialize()
+DemoServer::initialize()
 {
     //initialize application here:
     //...
 
-    addServant<HelloImp>(ServerConfig::Application + "." + ServerConfig::ServerName + ".HelloObj");
+    addServant<DemoServantImp>(ServerConfig::Application + "." + ServerConfig::ServerName + ".DemoServantObj");
 }
 /////////////////////////////////////////////////////////////////
 void
-HelloServer::destroyApp()
+DemoServer::destroyApp()
 {
     //destroy application here:
     //...
