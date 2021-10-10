@@ -66,3 +66,5 @@ int  FD_ISSET(int fd, fd_set *set);  //测试文件描述符集合里fd是否置
 是否相互调用|可以,看具体的operator new/delete实现|不可调用new
 函数重载|允许|不允许
 构造函数与析构函数|调用|不调用
+
+<font color='red'> 红色字体 </font>
