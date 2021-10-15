@@ -2,9 +2,11 @@
 
 本章涉及的内容有: 
 
-* [Docker安装Jenkins](./src/Jenkins.md)
 * [Docker搭建MySQL服务](./src/Docker+MySQL.md)
+* [Docker搭建Redis服务](./src/Docker+Redis.md)
 * [Linux下git安装以及配置](./src/Git.md)
+* [Docker安装Jenkins](./src/Jenkins.md)
+* [ngx-admin安装](./src/ngx-admin安装.md)
 
 ---
 

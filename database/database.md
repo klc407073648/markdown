@@ -4,4 +4,5 @@
 
 ## 目录
 
-* [redis学习](./redis/index.md)
+* [mysql学习](./mysql/Index.md)
+* [redis学习](./redis/Index.md)

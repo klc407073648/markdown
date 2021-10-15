@@ -5,8 +5,6 @@
 * [使用docker部署一个简单的c/c++程序的方法](https://freexyz.cn/server/60289.html)
 * [dockerfile——EXPOSE和端口映射参数-p、-P总结](https://blog.csdn.net/qq_17639365/article/details/86655177)
 
-
-
 ## 一、首先建立一个 hello-world.cpp 文件
 
 ```c++

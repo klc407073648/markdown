@@ -7,4 +7,5 @@
 * [ZeroMQ_part1](./ZeroMQ_part1.md)
 * [ZeroMQ_part2](./ZeroMQ_part2.md)
 * [ZeroMQ_part3](./ZeroMQ_part3.md)
+* [ZeroMQ_demo](./ZeroMQ_demo.md)
 

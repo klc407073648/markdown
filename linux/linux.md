@@ -4,4 +4,5 @@
 
 ## 目录
 
-* [shell操作](./shell/index.md)
+* [Linux的shell命令使用技巧](./shell/Linux的shell命令使用技巧.md)
+* [Linux使echo命令输出结果带颜色](./shell/Linux使echo命令输出结果带颜色.md)
