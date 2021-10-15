@@ -5,3 +5,7 @@
 ## 目录
 
 * [功能函数学习](./FunctionStudy/FunctionStudy.md)
+* [Linux系统调用Hook](./Linux系统调用Hook/Linux系统调用Hook.md)
+* [写时拷贝技术](./写时拷贝技术(copy-on-write).md)
+* [C++中的前向声明](./C++中的前向声明.md)
+* [linux下c和c++头文件和动态库的搜索](./linux下c和c++头文件和动态库的搜索.md)
