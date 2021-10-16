@@ -1,10 +1,8 @@
-# 使用Docker搭建MySQL服务
+# 使用Docker搭建Redis服务
 
 ## 参考资料
 
-* [使用Docker搭建MySQL服务](https://hub.docker.com/)
 * [Docker 安装 Redis 容器](https://blog.csdn.net/qq_24958783/article/details/107541425?spm=1001.2014.3001.5501)
-
 
 ## 获取Redis镜像
 

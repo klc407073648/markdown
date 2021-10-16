@@ -1,28 +1,6 @@
-目录
+# MySQL基础使用方法
 
-
-
-1. MySQL数据库的介绍
-
-2. 数据类型和约束
-
-2.1 数据类型
-
-2.2 数据约束
-
-3. 数据库操作的SQL语句
-
-3.1登陆和登出数据库
-
-3.2 数据库操作的SQL语句
-
-3.3 表结构操作的SQL语句
-
-3.4 表数据操作的SQL语句
-
-4.SQL语句用法总结
-
-1. MySQL数据库的介绍
+# MySQL数据库的介绍
 MySQL是一个关系型数据库管理系统，在 WEB 应用方面，MySQL是最好的 RDBMS (Relational Database Management System，关系数据库管理系统) 应用软件，它是由瑞典MySQL AB 公司开发，目前属于 Oracle 旗下产品，MySQL 是最流行的关系型数据库管理系统中的一个。
 
 Linux下的MySQL数据库安装可以使用如下命令，此外可以借助图形化客户端软件Navicat便于对数据库进行直接操作。
@@ -33,10 +11,10 @@ Linux下的MySQL数据库安装可以使用如下命令，此外可以借助图�
 
 
 
-2. 数据类型和约束
+# 数据类型和约束
 数据类型和约束保证了表中数据的准确性和完整性。
 
-2.1 数据类型
+##  数据类型
 数据类型是指在创建表的时候为表中字段指定数据类型，只有数据符合类型要求才能存储起来，使用数据类型的原则是:够用就行，尽量使用取值范围小的，而不用大的，这样可以更多的节省存储空间。
 
 常用数据类型如下:
@@ -46,7 +24,8 @@ Linux下的MySQL数据库安装可以使用如下命令，此外可以借助图�
 字符串：varchar,char
 日期时间: date, time, datetime
 枚举类型(enum)
-2.2 数据约束
+
+## 数据约束
 约束是指数据在数据类型限定的基础上额外增加的要求。
 
 常见的约束如下:
@@ -56,10 +35,11 @@ Linux下的MySQL数据库安装可以使用如下命令，此外可以借助图�
 惟一 unique: 此字段的值不允许重复.
 默认 default: 当不填写字段对应的值会使用默认值，如果填写时以填写为准.
 外键 foreign key: 对关系字段进行约束, 当为关系字段填写值时, 会到关联的表中查询此值是否存在, 如果存在则填写成功, 如果不存在则填写失败并抛出异常.
-3. 数据库操作的SQL语句
+
+## 数据库操作的SQL语句
 在linux下命令行客户端的使用。
 
-3.1登陆和登出数据库
+### 登陆和登出数据库
 登录数据库:
 输入  mysql -uroot -p   然后填入密码
 
@@ -70,7 +50,7 @@ select now();
 exit;
 
 
-3.2 数据库操作的SQL语句
+### 数据库操作的SQL语句
 查看所有数据库
 
 show databases;
@@ -90,7 +70,8 @@ select database();
 drop database 数据库名;
 例如：
 drop database mytest;
-3.3 表结构操作的SQL语句
+
+### 表结构操作的SQL语句
 查看当前数据库中所有表
 
 show tables;
@@ -138,7 +119,8 @@ show create database mytest;
 drop table 表名;
 例如：
 drop table students;
-3.4 表数据操作的SQL语句
+
+### 表数据操作的SQL语句
 查询数据
 
 -- 1. 查询所有列
@@ -191,7 +173,7 @@ alter table students add isdelete bit default 0;
 update students set isdelete = 1 where id = 8;
 说明:  逻辑删除，本质就是修改操作。
 
-4.SQL语句用法总结
+# SQL语句用法总结
 登录数据库: mysql -uroot -p
 退出数据库: quit 或者 exit 或者 ctr + d
 创建数据库: create database 数据库名 charset=utf8;
