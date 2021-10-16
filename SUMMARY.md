@@ -33,8 +33,8 @@
 * [数据库]
     * [MySQL]
         * [MySQL基本概念](database/mysql/MySQL基本概念.md)
-        * [MySQL基本概念](database/mysql/MySQL基础使用方法.md)
-        * [MySQL索引设计](database/mysql/MySQL索引设计.md)
+        * [MySQL基础使用方法](database/mysql/MySQL基础使用方法.md)
+        * [MySQL索引结构设计](database/mysql/MySQL索引结构设计.md)
     * [Redis]
         * [Redis基本数据类型以及应用](database/redis/基本数据类型以及应用.md)
         * [Redis持久化](database/redis/持久化.md)
