@@ -132,7 +132,7 @@ app: mysql 指定具有app标签，且值为mysql 的pod全部纳入本组Servic
 [root@192 k8s]# mysql -h 10.254.253.220  -u root -P 3306 -p123456 -Dmtest</home/k8s/student.sql
 ```
 
-![1](../../images/k8s/mysql.PNG)
+![1](../../images/mysql.PNG)
 
 
 ### 三、创建Tomcat的RC和SVC
@@ -181,5 +181,5 @@ myweb-svc.yaml定义了:
 
 在你的笔记本上打开浏览器，输入http://虚拟机 IP:30001/demo/。
 
-![1](../../images/k8s/myweb.PNG)
+![1](../../images/myweb.PNG)
 
